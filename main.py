@@ -8,6 +8,7 @@ pygame.mixer.init()
 
 # Cragamos los recurosos del video juego
 fondo = pygame.image.load('imagenes/fondo.jpg')
+fondo2 = pygame.image.load('imagenes/fondo_bienvenida.jpg')
 laser_sonido = pygame.mixer.Sound('sonidos/laser.wav')
 explosion_sonido = pygame.mixer.Sound('sonidos/explosion.wav')
 golpe_sonido = pygame.mixer.Sound('sonidos/golpe.wav')
@@ -60,7 +61,7 @@ def texto_bienvenida(frame, text, size, x, y, color_texto):
 
 
 def mostrar_pantalla_bienvenida():
-    window.blit(fondo, (0, 0))
+    window.blit(fondo2, (0, 0))
     texto_bienvenida(window, "¡Bienvenido a la Guerra de los Mundos!", 40, width // 2, height // 2, blanco_bienvenida)
     pygame.draw.rect(window, negro, (width // 2 - 75, height // 2 + 50, 150, 50))
     texto_bienvenida(window, "Jugar", 30, width // 2, height // 2 + 55, blanco_bienvenida)
