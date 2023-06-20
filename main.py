@@ -1,6 +1,3 @@
-import os
-import sys
-
 import pygame
 import random
 
@@ -15,7 +12,7 @@ laser_sonido = pygame.mixer.Sound('laser.wav')
 explosion_sonido = pygame.mixer.Sound('explosion.wav')
 golpe_sonido = pygame.mixer.Sound('golpe.wav')
 
-# Cargamos el sonido de fondo
+# Cargando musica de fondo
 pygame.mixer.music.load('bg_sonido.mp3')
 pygame.mixer.music.play(-1)
 
@@ -41,14 +38,37 @@ score = 0
 vida = 100
 blanco = (255, 255, 255)
 negro = (0, 0, 0)
+blanco_bienvenida = (255, 255, 255)
 
 
+# funcion que define el texto de puntaje
 def texto_puntuacion(frame, text, size, x, y):
     font = pygame.font.SysFont('Calibri', 20, bold=False)
     text_frame = font.render(text, True, blanco, negro)
     text_rect = text_frame.get_rect()
     text_rect.midtop = (960, 10)
     frame.blit(text_frame, text_rect)
+
+
+# funcion que definie el texto de bienvenida
+def texto_bienvenida(frame, text, size, x, y, color_texto):
+    font = pygame.font.SysFont('Calibri', size, bold=False)
+    text_frame = font.render(text, True, color_texto)
+    text_rect = text_frame.get_rect()
+    text_rect.midtop = (x, y)
+    frame.blit(text_frame, text_rect)
+
+
+def mostrar_pantalla_bienvenida():
+    window.blit(fondo, (0, 0))
+    texto_bienvenida(window, "¡Bienvenido a la Guerra de los Mundos!", 40, width // 2, height // 2, blanco_bienvenida)
+    pygame.draw.rect(window, negro, (width // 2 - 75, height // 2 + 50, 150, 50))
+    texto_bienvenida(window, "Jugar", 30, width // 2, height // 2 + 55, blanco_bienvenida)
+    pygame.display.flip()
+
+
+mostrar_pantalla_bienvenida()
+pantalla_inicio = True
 
 
 def barra_vida(frame, x, y, nivel):
@@ -192,59 +212,71 @@ for x in range(10):
     grupo_jugador.add(enemigo)
 
 while run:
-    clock.tick(fps)
-    window.blit(fondo, (0, 0))
+    while run:
+        if pantalla_inicio:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    run = False
+                elif event.type == pygame.MOUSEBUTTONDOWN:
+                    if width // 2 - 75 <= event.pos[0] <= width // 2 + 75 and height // 2 + 50 <= event.pos[
+                        1] <= height // 2 + 100:
+                        pantalla_inicio = False
+            mostrar_pantalla_bienvenida()
+        else:
 
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            run = False
-        elif event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_SPACE:
-                player.disparar()
+            clock.tick(fps)
+            window.blit(fondo, (0, 0))
 
-    grupo_jugador.update()
-    grupo_enemigos.update()
-    grupo_balas_jugador.update()
-    grupo_balas_enemigos.update()
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    run = False
+                elif event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_SPACE:
+                        player.disparar()
 
-    grupo_jugador.draw(window)
+            grupo_jugador.update()
+            grupo_enemigos.update()
+            grupo_balas_jugador.update()
+            grupo_balas_enemigos.update()
 
-    # Coliciones  balas_jugador -  enemigo
-    colicion1 = pygame.sprite.groupcollide(grupo_enemigos, grupo_balas_jugador, True, True)
-    for i in colicion1:
-        score += 10
-        enemigo.disparar_enemigos()
-        enemigo = Enemigos(300, 10)
-        grupo_enemigos.add(enemigo)
-        grupo_jugador.add(enemigo)
+            grupo_jugador.draw(window)
 
-        explo = Explosion(i.rect.center)
-        grupo_jugador.add(explo)
-        explosion_sonido.set_volume(0.3)
-        explosion_sonido.play()
+            # Coliciones  balas_jugador -  enemigo
+            colicion1 = pygame.sprite.groupcollide(grupo_enemigos, grupo_balas_jugador, True, True)
+            for i in colicion1:
+                score += 10
+                enemigo.disparar_enemigos()
+                enemigo = Enemigos(300, 10)
+                grupo_enemigos.add(enemigo)
+                grupo_jugador.add(enemigo)
 
-    # Coliciones  jugador - balas_enemigo 
-    colicion2 = pygame.sprite.spritecollide(player, grupo_balas_enemigos, True)
-    for j in colicion2:
-        player.vida -= 10
-        if player.vida <= 0:
-            run = False
-        explo1 = Explosion(j.rect.center)
-        grupo_jugador.add(explo1)
-        golpe_sonido.play()
+                explo = Explosion(i.rect.center)
+                grupo_jugador.add(explo)
+                explosion_sonido.set_volume(0.3)
+                explosion_sonido.play()
 
-        # Coliciones  jugador - enemigo
-    hits = pygame.sprite.spritecollide(player, grupo_enemigos, False)
-    for hit in hits:
-        player.vida -= 100
-        enemigos = Enemigos(10, 10)
-        grupo_jugador.add(enemigos)
-        grupo_enemigos.add(enemigos)
-        if player.vida <= 0:
-            run = False
-    # Indicador y Score
-    texto_puntuacion(window, ('  Puntaje: ' + str(score) + '       '), 30, width - 85, 2)
-    barra_vida(window, width - 285, 0, player.vida)
+            # Coliciones  jugador - balas_enemigo
+            colicion2 = pygame.sprite.spritecollide(player, grupo_balas_enemigos, True)
+            for j in colicion2:
+                player.vida -= 10
+                if player.vida <= 0:
+                    run = False
+                explo1 = Explosion(j.rect.center)
+                grupo_jugador.add(explo1)
+                golpe_sonido.play()
 
-    pygame.display.flip()
+                # Coliciones  jugador - enemigo
+            hits = pygame.sprite.spritecollide(player, grupo_enemigos, False)
+            for hit in hits:
+                player.vida -= 100
+                enemigos = Enemigos(10, 10)
+                grupo_jugador.add(enemigos)
+                grupo_enemigos.add(enemigos)
+                if player.vida <= 0:
+                    run = False
+            # Indicador y Score
+            texto_puntuacion(window, ('  Puntaje: ' + str(score) + '       '), 30, width - 85, 2)
+            barra_vida(window, width - 285, 0, player.vida)
+
+            pygame.display.flip()
 pygame.quit()
