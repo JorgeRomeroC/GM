@@ -8,12 +8,12 @@ pygame.mixer.init()
 
 # Cragamos los recurosos del video juego
 fondo = pygame.image.load('imagenes/fondo.jpg')
-laser_sonido = pygame.mixer.Sound('laser.wav')
-explosion_sonido = pygame.mixer.Sound('explosion.wav')
-golpe_sonido = pygame.mixer.Sound('golpe.wav')
+laser_sonido = pygame.mixer.Sound('sonidos/laser.wav')
+explosion_sonido = pygame.mixer.Sound('sonidos/explosion.wav')
+golpe_sonido = pygame.mixer.Sound('sonidos/golpe.wav')
 
 # Cargando musica de fondo
-pygame.mixer.music.load('bg_sonido.mp3')
+pygame.mixer.music.load('sonidos/bg_sonido.mp3')
 pygame.mixer.music.play(-1)
 
 # recorremos la lista de explosiones
@@ -218,8 +218,7 @@ while run:
                 if event.type == pygame.QUIT:
                     run = False
                 elif event.type == pygame.MOUSEBUTTONDOWN:
-                    if width // 2 - 75 <= event.pos[0] <= width // 2 + 75 and height // 2 + 50 <= event.pos[
-                        1] <= height // 2 + 100:
+                    if width // 2 - 75 <= event.pos[0] <= width // 2 + 75 and height // 2 + 50 <= event.pos[1] <= height // 2 + 100:
                         pantalla_inicio = False
             mostrar_pantalla_bienvenida()
         else:
