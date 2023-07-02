@@ -4,4 +4,4 @@ Desarrollo de video juego con PyGame de Python para Taller de Video Juegos AIEP 
 ## EEjecutar el proyecto
 
 - En la terminal de VS Code ejecuta el siguiente comando
-- '''python main.py'''
+  ```python main.py```
